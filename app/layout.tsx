@@ -16,6 +16,9 @@ export const metadata: Metadata = {
     siteName: "Cotten Firm Law Blog",
     type: "website",
   },
+  verification: {
+    google: "Jw0REpOwUZOYrRLZYp3kV4oBQOJa1lDH9mrhS8ceBGE",
+  },
 };
 
 export default function RootLayout({
