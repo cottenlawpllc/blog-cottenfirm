@@ -15,6 +15,7 @@ export interface BlogPost {
   published?: boolean
   published_at: string | null
   created_at: string
+  updated_at: string | null
   category: string | null
   tags: string[] | null
   author: string
@@ -24,7 +25,7 @@ export interface BlogPost {
 export async function getAllPosts(): Promise<Omit<BlogPost, 'content'>[]> {
   const { data, error } = await supabase
     .from('blog_posts')
-    .select('id, slug, title, excerpt, meta_description, published_at, created_at, category, tags, author, featured_image')
+    .select('id, slug, title, excerpt, meta_description, published_at, created_at, updated_at, category, tags, author, featured_image')
     .eq('published', true)
     .order('published_at', { ascending: false })
 
@@ -54,7 +55,7 @@ export async function getRelatedPosts(
   limit = 4
 ): Promise<Omit<BlogPost, 'content'>[]> {
   // Build a pool: same category first, then fill from same tags, then recent
-  const select = 'id, slug, title, excerpt, published_at, created_at, category, tags, author, featured_image, meta_description'
+  const select = 'id, slug, title, excerpt, published_at, created_at, updated_at, category, tags, author, featured_image, meta_description'
 
   // Step 1: same category (excluding current post)
   let pool: Omit<BlogPost, 'content'>[] = []
