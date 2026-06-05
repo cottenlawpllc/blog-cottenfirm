@@ -79,7 +79,7 @@ export default async function PostPage({ params }: Props) {
       url: 'https://cottenfirm.com',
     },
     datePublished: post.published_at || post.created_at,
-    dateModified: post.updated_at || post.published_at || post.created_at,
+    dateModified: post.published_at || post.created_at,
     url: `https://blog.cottenfirm.com/${post.slug}`,
     mainEntityOfPage: {
       '@type': 'WebPage',
