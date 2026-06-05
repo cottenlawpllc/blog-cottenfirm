@@ -79,7 +79,8 @@ export default async function PostPage({ params }: Props) {
       url: 'https://cottenfirm.com',
     },
     datePublished: post.published_at || post.created_at,
-    dateModified: post.updated_at || post.published_at || post.created_at,
+    dateModified: [post.updated_at, post.published_at, post.created_at]
+      .filter(Boolean).reduce((a, b) => (new Date(b!) > new Date(a!) ? b : a)) as string,
     url: `https://blog.cottenfirm.com/${post.slug}`,
     mainEntityOfPage: {
       '@type': 'WebPage',
