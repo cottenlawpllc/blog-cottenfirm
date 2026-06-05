@@ -46,3 +46,63 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
   if (error) return null
   return data
 }
+
+export async function getRelatedPosts(
+  currentSlug: string,
+  category: string | null,
+  tags: string[] | null,
+  limit = 4
+): Promise<Omit<BlogPost, 'content'>[]> {
+  // Build a pool: same category first, then fill from same tags, then recent
+  const select = 'id, slug, title, excerpt, published_at, created_at, category, tags, author, featured_image, meta_description'
+
+  // Step 1: same category (excluding current post)
+  let pool: Omit<BlogPost, 'content'>[] = []
+
+  if (category) {
+    const { data } = await supabase
+      .from('blog_posts')
+      .select(select)
+      .eq('published', true)
+      .eq('category', category)
+      .neq('slug', currentSlug)
+      .order('published_at', { ascending: false })
+      .limit(limit * 3) // fetch more, dedupe below
+    if (data) pool = [...data]
+  }
+
+  // Step 2: same tags (if pool still thin)
+  if (pool.length < limit && tags && tags.length > 0) {
+    const { data } = await supabase
+      .from('blog_posts')
+      .select(select)
+      .eq('published', true)
+      .neq('slug', currentSlug)
+      .overlaps('tags', tags)
+      .order('published_at', { ascending: false })
+      .limit(limit * 3)
+    if (data) {
+      for (const p of data) {
+        if (!pool.find(x => x.slug === p.slug)) pool.push(p)
+      }
+    }
+  }
+
+  // Step 3: fill remaining slots with recent posts
+  if (pool.length < limit) {
+    const { data } = await supabase
+      .from('blog_posts')
+      .select(select)
+      .eq('published', true)
+      .neq('slug', currentSlug)
+      .order('published_at', { ascending: false })
+      .limit(limit * 2)
+    if (data) {
+      for (const p of data) {
+        if (!pool.find(x => x.slug === p.slug)) pool.push(p)
+      }
+    }
+  }
+
+  return pool.slice(0, limit)
+}

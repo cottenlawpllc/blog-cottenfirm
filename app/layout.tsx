@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import Script from "next/script";
 import "./globals.css";
+
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,9 +18,28 @@ export const metadata: Metadata = {
   openGraph: {
     siteName: "Cotten Firm Law Blog",
     type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@spokestatutejc",
+  },
+  alternates: {
+    canonical: "https://blog.cottenfirm.com",
   },
   verification: {
     google: "Jw0REpOwUZOYrRLZYp3kV4oBQOJa1lDH9mrhS8ceBGE",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
@@ -71,6 +93,26 @@ export default function RootLayout({
           </div>
         </footer>
         <Analytics />
+        {/* Google Analytics 4 */}
+        {GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_ID}', {
+                  page_path: window.location.pathname,
+                  send_page_view: true
+                });
+              `}
+            </Script>
+          </>
+        )}
       </body>
     </html>
   );

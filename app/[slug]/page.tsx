@@ -1,4 +1,4 @@
-import { getPostBySlug, getAllPosts } from '@/lib/supabase'
+import { getPostBySlug, getAllPosts, getRelatedPosts } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
@@ -15,15 +15,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getPostBySlug(slug)
   if (!post) return { title: 'Not Found' }
 
+  const description = post.meta_description || post.excerpt || undefined
   return {
     title: post.title,
-    description: post.meta_description || post.excerpt || undefined,
+    description,
+    alternates: {
+      canonical: `https://blog.cottenfirm.com/${slug}`,
+    },
     openGraph: {
       title: post.title,
-      description: post.meta_description || post.excerpt || undefined,
+      description,
       type: 'article',
+      url: `https://blog.cottenfirm.com/${slug}`,
+      siteName: 'Cotten Firm Law Blog',
       authors: [post.author],
       publishedTime: post.published_at || post.created_at,
+      locale: 'en_US',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description,
+      site: '@spokestatutejc',
     },
   }
 }
@@ -41,7 +54,12 @@ function formatDate(dateStr: string) {
 
 export default async function PostPage({ params }: Props) {
   const { slug } = await params
-  const post = await getPostBySlug(slug)
+  const [post, related] = await Promise.all([
+    getPostBySlug(slug),
+    getPostBySlug(slug).then(p =>
+      p ? getRelatedPosts(slug, p.category, p.tags, 4) : []
+    ),
+  ])
 
   if (!post) notFound()
 
@@ -122,6 +140,34 @@ export default async function PostPage({ params }: Props) {
           Or call <a href="tel:+19195867072" className="text-slate-400 hover:text-white">(919) 586-7072</a>
         </div>
       </div>
+
+      {/* Related Articles */}
+      {related.length > 0 && (
+        <div className="mt-12">
+          <h2 className="text-xl font-bold text-slate-900 mb-5">Related Articles</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {related.map((r) => (
+              <Link
+                key={r.slug}
+                href={`/${r.slug}`}
+                className="block p-4 border border-slate-200 rounded-xl hover:border-blue-300 hover:shadow-sm transition-all group"
+              >
+                {r.category && (
+                  <span className="text-xs font-semibold text-blue-600 uppercase tracking-wide">
+                    {r.category}
+                  </span>
+                )}
+                <h3 className="text-sm font-semibold text-slate-800 mt-1 group-hover:text-blue-600 transition-colors leading-snug">
+                  {r.title}
+                </h3>
+                {r.excerpt && (
+                  <p className="text-xs text-slate-500 mt-1 line-clamp-2">{r.excerpt}</p>
+                )}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Back link */}
       <div className="mt-8 text-center">

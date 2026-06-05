@@ -90,7 +90,36 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-    return NextResponse.json({ success: true, slug: data?.slug })
+
+    // Sync content_queue: mark matching staged keyword as generated, link the blog post.
+    // Best-effort — must never block ingestion.
+    let queueMatched: string | null = null
+    try {
+      if (data?.id) {
+        const norm = (s: string | null | undefined) =>
+          (s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+        const nk = norm(keyword)
+        const nt = norm(title)
+        const { data: candidates } = await supabase
+          .from('content_queue')
+          .select('id, keyword, title')
+          .in('status', ['queued', 'generating'])
+        const match = candidates?.find(
+          (r) => (nk && norm(r.keyword) === nk) || (nt && norm(r.title) === nt)
+        )
+        if (match) {
+          await supabase.from('content_queue')
+            .update({ status: 'generated', generated_at: new Date().toISOString(),
+              published_blog_post_id: data.id })
+            .eq('id', match.id)
+          queueMatched = match.id
+        }
+      }
+    } catch (syncErr) {
+      console.error('content_queue sync failed (non-fatal):', syncErr)
+    }
+
+    return NextResponse.json({ success: true, slug: data?.slug, queueMatched })
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
