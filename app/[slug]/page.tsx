@@ -63,8 +63,72 @@ export default async function PostPage({ params }: Props) {
 
   if (!post) notFound()
 
+  const blogPostingSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.meta_description || post.excerpt || '',
+    author: {
+      '@type': 'Person',
+      name: post.author,
+      url: 'https://cottenfirm.com',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Cotten Firm, PLLC',
+      url: 'https://cottenfirm.com',
+    },
+    datePublished: post.published_at || post.created_at,
+    dateModified: post.updated_at || post.published_at || post.created_at,
+    url: `https://blog.cottenfirm.com/${post.slug}`,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://blog.cottenfirm.com/${post.slug}`,
+    },
+    ...(post.tags && post.tags.length > 0 ? { keywords: post.tags.join(', ') } : {}),
+    articleSection: post.category || 'NC Traffic Law',
+    inLanguage: 'en-US',
+  }
+
+  const legalServiceSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'LegalService',
+    name: 'Cotten Firm, PLLC',
+    url: 'https://cottenfirm.com',
+    telephone: '+19195867072',
+    email: 'jeremy@cottenfirm.com',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '',
+      addressLocality: 'Fuquay-Varina',
+      addressRegion: 'NC',
+      postalCode: '27526',
+      addressCountry: 'US',
+    },
+    areaServed: [
+      { '@type': 'AdministrativeArea', name: 'Wake County, NC' },
+      { '@type': 'AdministrativeArea', name: 'Johnston County, NC' },
+      { '@type': 'AdministrativeArea', name: 'Harnett County, NC' },
+      { '@type': 'AdministrativeArea', name: 'Chatham County, NC' },
+      { '@type': 'AdministrativeArea', name: 'Orange County, NC' },
+    ],
+    description: 'Traffic and criminal defense attorney serving Wake, Johnston, Harnett, Chatham, and Orange counties in North Carolina.',
+    priceRange: '$$',
+    sameAs: [
+      'https://www.facebook.com/cottenlawpllc',
+    ],
+  }
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(legalServiceSchema) }}
+      />
       {/* Breadcrumb */}
       <div className="text-sm text-slate-400 mb-6">
         <Link href="/" className="hover:text-blue-600">Blog</Link>
