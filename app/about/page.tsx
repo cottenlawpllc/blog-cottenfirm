@@ -67,12 +67,19 @@ export default function AboutPage() {
           since <strong>2012</strong>.
         </p>
         <p>
-          His path to law was an unconventional one. Before law school, Jeremy earned a{' '}
-          <strong>B.A. in Trust &amp; Investment Management from Campbell University</strong> — a
-          finance background that shapes how he explains the real, dollars-and-cents consequences of
-          a conviction (license points, insurance surcharges, and the long tail of costs most drivers
-          never see coming). He went on to earn his <strong>J.D. from Campbell University School of
-          Law</strong>.
+          His path to law was anything but a straight line. Before he ever set foot in a courtroom,
+          Jeremy chased a <strong>baseball career</strong>, then spent years in <strong>financial
+          services</strong>, earning professional designations along the way. He holds a{' '}
+          <strong>B.A. in Trust &amp; Investment Management from Campbell University</strong> and went
+          on to earn his <strong>J.D. from Campbell University School of Law</strong>. That finance
+          background still shapes how he talks to clients — in plain, dollars-and-cents terms about
+          what a conviction actually costs (license points, insurance surcharges, and the long tail of
+          expense most drivers never see coming).
+        </p>
+        <p>
+          A familiar face around <strong>Fuquay-Varina</strong> and the surrounding towns, Jeremy is
+          proud to be a local — and much of his practice comes from neighbors, friends, and word of
+          mouth in the community he calls home.
         </p>
         <p>
           Today, Jeremy focuses on traffic tickets, DWI, driving-while-license-revoked, and related

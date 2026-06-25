@@ -1,10 +1,24 @@
 import { getPostBySlug, getAllPosts, getRelatedPosts } from '@/lib/supabase'
+import { categorySlug } from '@/lib/categories'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
 interface Props {
   params: Promise<{ slug: string }>
+}
+
+// Pull <p><strong>Question?</strong> Answer</p> pairs out of the article HTML for FAQ schema.
+function extractFaqs(html: string): { q: string; a: string }[] {
+  const out: { q: string; a: string }[] = []
+  const re = /<p>\s*<strong>\s*(.*?\?)\s*<\/strong>\s*(.*?)<\/p>/gis
+  let m: RegExpExecArray | null
+  while ((m = re.exec(html)) !== null) {
+    const q = m[1].replace(/<[^>]+>/g, '').replace(/&[a-z]+;/gi, ' ').trim()
+    const a = m[2].replace(/<[^>]+>/g, '').replace(/&rsquo;/g, "'").replace(/&amp;/g, '&').trim()
+    if (q.length > 3 && a.length > 10) out.push({ q, a })
+  }
+  return out.slice(0, 10)
 }
 
 export const dynamic = 'force-dynamic'
@@ -132,6 +146,17 @@ export default async function PostPage({ params }: Props) {
     ],
   }
 
+  const faqs = extractFaqs(post.content || '')
+  const faqSchema = faqs.length >= 2 ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  } : null
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
       <script
@@ -142,19 +167,34 @@ export default async function PostPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(legalServiceSchema) }}
       />
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
       {/* Breadcrumb */}
       <div className="text-sm text-slate-400 mb-6">
         <Link href="/" className="hover:text-blue-600">Blog</Link>
         <span className="mx-2">›</span>
-        <span className="text-slate-600">{post.category || 'Article'}</span>
+        {post.category ? (
+          <Link href={`/category/${categorySlug(post.category)}`} className="text-slate-600 hover:text-blue-600">
+            {post.category}
+          </Link>
+        ) : (
+          <span className="text-slate-600">Article</span>
+        )}
       </div>
 
       {/* Article header */}
       <header className="mb-8">
         {post.category && (
-          <span className="text-xs font-semibold text-blue-600 uppercase tracking-wide">
+          <Link
+            href={`/category/${categorySlug(post.category)}`}
+            className="text-xs font-semibold text-blue-600 uppercase tracking-wide hover:underline"
+          >
             {post.category}
-          </span>
+          </Link>
         )}
         <h1 className="text-3xl font-bold text-slate-900 mt-2 mb-4 leading-tight">
           {post.title}
