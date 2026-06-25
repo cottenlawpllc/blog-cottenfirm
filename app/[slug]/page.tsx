@@ -11,7 +11,7 @@ interface Props {
 // Pull <p><strong>Question?</strong> Answer</p> pairs out of the article HTML for FAQ schema.
 function extractFaqs(html: string): { q: string; a: string }[] {
   const out: { q: string; a: string }[] = []
-  const re = /<p>\s*<strong>\s*(.*?\?)\s*<\/strong>\s*(.*?)<\/p>/gis
+  const re = /<p>\s*<strong>\s*([\s\S]*?\?)\s*<\/strong>\s*([\s\S]*?)<\/p>/gi
   let m: RegExpExecArray | null
   while ((m = re.exec(html)) !== null) {
     const q = m[1].replace(/<[^>]+>/g, '').replace(/&[a-z]+;/gi, ' ').trim()
