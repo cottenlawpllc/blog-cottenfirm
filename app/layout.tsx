@@ -61,10 +61,10 @@ export default function RootLayout({
               </div>
             </a>
             <a
-              href="https://portal.cottenfirm.com"
+              href="https://portal.cottenfirm.com?utm_source=blog&utm_medium=header&utm_campaign=hire"
               className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-lg transition-colors"
             >
-              Sign Up Now →
+              Hire Us Now →
             </a>
           </div>
         </header>
@@ -84,6 +84,16 @@ export default function RootLayout({
                 <div className="text-sm mt-1">Serving Wake, Johnston, Harnett, Chatham & Orange counties</div>
               </div>
               <div className="text-sm">
+                <a
+                  href="https://portal.cottenfirm.com?utm_source=blog&utm_medium=footer&utm_campaign=hire"
+                  className="inline-block mb-3 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-lg transition-colors"
+                >
+                  Hire Us Now →
+                </a>
+                <div className="flex items-center gap-4 mb-3">
+                  <a href="https://www.facebook.com/cottenlawpllc" target="_blank" rel="noopener noreferrer" className="hover:text-white">Facebook</a>
+                  <a href="https://x.com/spokestatutejc" target="_blank" rel="noopener noreferrer" className="hover:text-white">X (Twitter)</a>
+                </div>
                 <div><a href="tel:+19195867072" className="hover:text-white">(919) 586-7072</a></div>
                 <div><a href="https://portal.cottenfirm.com" className="hover:text-white">Client Portal</a></div>
                 <div className="mt-2 text-xs text-slate-500">© {new Date().getFullYear()} Cotten Firm, PLLC. All rights reserved.</div>

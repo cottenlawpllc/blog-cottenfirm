@@ -70,8 +70,19 @@ export default async function PostPage({ params }: Props) {
     description: post.meta_description || post.excerpt || '',
     author: {
       '@type': 'Person',
-      name: post.author,
-      url: 'https://cottenfirm.com',
+      name: 'Jeremy Cotten',
+      jobTitle: 'Attorney',
+      url: 'https://blog.cottenfirm.com/about',
+      alumniOf: [
+        { '@type': 'CollegeOrUniversity', name: 'Campbell University School of Law' },
+        { '@type': 'CollegeOrUniversity', name: 'Campbell University' },
+      ],
+      knowsAbout: ['North Carolina traffic law', 'DWI defense', 'driving while license revoked', 'criminal defense', 'speeding tickets'],
+      worksFor: { '@type': 'LegalService', name: 'Cotten Firm, PLLC' },
+      sameAs: [
+        'https://www.facebook.com/cottenlawpllc',
+        'https://x.com/spokestatutejc',
+      ],
     },
     publisher: {
       '@type': 'Organization',
@@ -117,6 +128,7 @@ export default async function PostPage({ params }: Props) {
     priceRange: '$$',
     sameAs: [
       'https://www.facebook.com/cottenlawpllc',
+      'https://x.com/spokestatutejc',
     ],
   }
 
@@ -203,6 +215,33 @@ export default async function PostPage({ params }: Props) {
         </a>
         <div className="mt-3 text-slate-500 text-sm">
           Or call <a href="tel:+19195867072" className="text-slate-400 hover:text-white">(919) 586-7072</a>
+        </div>
+      </div>
+
+      {/* About the Author — E-E-A-T trust signal */}
+      <div className="mt-12 p-6 border border-slate-200 rounded-2xl bg-slate-50">
+        <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
+          <h2 className="text-lg font-bold text-slate-900">About the author</h2>
+          <div className="flex items-center gap-4 text-sm">
+            <a href="https://www.facebook.com/cottenlawpllc" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-blue-600">Facebook</a>
+            <a href="https://x.com/spokestatutejc" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-blue-600">X</a>
+          </div>
+        </div>
+        <p className="text-sm text-slate-600 leading-relaxed">
+          <strong className="text-slate-800">Jeremy Cotten</strong> is a North Carolina attorney and the
+          founder of Cotten Firm, PLLC in Fuquay-Varina. Licensed to practice in North Carolina since 2012,
+          he took an unconventional route to law — earning a B.A. in Trust &amp; Investment Management from
+          Campbell University before completing his J.D. at Campbell University School of Law. Today he focuses
+          on traffic and criminal defense across Wake, Johnston, Harnett, Chatham, and Orange counties, handling
+          most matters on a flat fee and appearing in court so his clients don&rsquo;t have to.
+        </p>
+        <div className="mt-4">
+          <a
+            href="https://portal.cottenfirm.com?utm_source=blog&utm_medium=author_bio&utm_campaign=hire"
+            className="inline-block px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg text-sm transition-colors"
+          >
+            Hire Us Now →
+          </a>
         </div>
       </div>
 
